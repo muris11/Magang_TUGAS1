@@ -15,18 +15,35 @@ Route::get('/health', function () {
         'app_url' => config('app.url'),
         'db' => 'unknown',
         'session_driver' => config('session.driver'),
+        'session_secure' => var_export(config('session.secure'), true),
+        'session_domain' => var_export(config('session.domain'), true),
+        'session_same_site' => config('session.same_site'),
         'cache_store' => config('cache.default'),
         'storage_writable' => is_writable(storage_path('framework/sessions')) ? 'yes' : 'NO',
         'bootstrap_cache_writable' => is_writable(base_path('bootstrap/cache')) ? 'yes' : 'NO',
+        'request_secure' => request()->isSecure() ? 'yes' : 'no',
+        'x_forwarded_proto' => request()->header('X-Forwarded-Proto') ?: '(empty)',
     ];
     try {
         \DB::connection()->getPdo();
         $checks['db'] = 'ok (' . \DB::connection()->getDatabaseName() . ')';
         $checks['user_count'] = \App\Models\User::count();
+        $checks['session_count'] = \DB::table('sessions')->count();
+        $checks['last_session'] = \DB::table('sessions')->orderBy('last_activity', 'desc')->first();
     } catch (\Throwable $e) {
         $checks['db'] = 'FAIL: ' . $e->getMessage();
     }
     return response()->json($checks);
+});
+
+Route::get('/health-session', function (Request $request) {
+    $request->session()->put('test_key', 'test_value_' . time());
+    $request->session()->save();
+    return response()->json([
+        'session_id' => $request->session()->getId(),
+        'test_key' => $request->session()->get('test_key'),
+        'cookie_set' => true,
+    ]);
 });
 
 Route::get('/dashboard', function () {
