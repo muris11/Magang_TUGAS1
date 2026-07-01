@@ -51,6 +51,12 @@
                             <select x-model="sort" @change="fetchData(true)" class="border-none focus:ring-0 text-sm font-medium text-black/70 bg-transparent cursor-pointer pl-2 pr-8 appearance-none w-32">
                                 <option value="terbaru">Latest</option>
                                 <option value="terlama">Oldest</option>
+                                <option value="nama_asc">Name A-Z</option>
+                                <option value="nama_desc">Name Z-A</option>
+                                <option value="kategori_asc">Category A-Z</option>
+                                <option value="kategori_desc">Category Z-A</option>
+                                <option value="stok_asc">Lowest Stock</option>
+                                <option value="stok_desc">Highest Stock</option>
                                 <option value="harga_tinggi">Highest Price</option>
                                 <option value="harga_rendah">Lowest Price</option>
                             </select>
@@ -68,12 +74,32 @@
                 </div>
             </div>
 
-            <div class="hidden md:grid grid-cols-12 gap-4 px-8 pb-4 text-xs font-semibold tracking-[0.1em] text-black/40 uppercase mb-2 border-b border-black/5">
-                <div class="col-span-2">ID</div>
-                <div class="col-span-4">Product Name</div>
-                <div class="col-span-2">Category</div>
-                <div class="col-span-2 text-right">Stock</div>
-                <div class="col-span-2 text-right">Value</div>
+            <div class="hidden md:grid grid-cols-12 gap-4 px-8 pb-4 text-xs font-semibold tracking-[0.1em] text-black/40 uppercase mb-2 border-b border-black/5 select-none">
+                <div class="col-span-2 cursor-pointer hover:text-black transition-colors flex items-center gap-1" @click="toggleSort('id')">
+                    ID
+                    <span x-show="sort === 'terbaru'" class="text-[10px]">▼</span>
+                    <span x-show="sort === 'terlama'" class="text-[10px]">▲</span>
+                </div>
+                <div class="col-span-4 cursor-pointer hover:text-black transition-colors flex items-center gap-1" @click="toggleSort('nama')">
+                    Product Name
+                    <span x-show="sort === 'nama_desc'" class="text-[10px]">▼</span>
+                    <span x-show="sort === 'nama_asc'" class="text-[10px]">▲</span>
+                </div>
+                <div class="col-span-2 cursor-pointer hover:text-black transition-colors flex items-center gap-1" @click="toggleSort('kategori')">
+                    Category
+                    <span x-show="sort === 'kategori_desc'" class="text-[10px]">▼</span>
+                    <span x-show="sort === 'kategori_asc'" class="text-[10px]">▲</span>
+                </div>
+                <div class="col-span-2 text-right cursor-pointer hover:text-black transition-colors flex items-center justify-end gap-1" @click="toggleSort('stok')">
+                    <span x-show="sort === 'stok_desc'" class="text-[10px]">▼</span>
+                    <span x-show="sort === 'stok_asc'" class="text-[10px]">▲</span>
+                    Stock
+                </div>
+                <div class="col-span-2 text-right cursor-pointer hover:text-black transition-colors flex items-center justify-end gap-1" @click="toggleSort('harga')">
+                    <span x-show="sort === 'harga_tinggi'" class="text-[10px]">▼</span>
+                    <span x-show="sort === 'harga_rendah'" class="text-[10px]">▲</span>
+                    Value
+                </div>
             </div>
 
             <div class="flex flex-col gap-4 relative" style="min-height: 60vh;">
@@ -190,6 +216,21 @@
 
                 init() {
                     this.fetchData();
+                },
+
+                toggleSort(column) {
+                    if (column === 'id') {
+                        this.sort = this.sort === 'terbaru' ? 'terlama' : 'terbaru';
+                    } else if (column === 'nama') {
+                        this.sort = this.sort === 'nama_asc' ? 'nama_desc' : 'nama_asc';
+                    } else if (column === 'kategori') {
+                        this.sort = this.sort === 'kategori_asc' ? 'kategori_desc' : 'kategori_asc';
+                    } else if (column === 'stok') {
+                        this.sort = this.sort === 'stok_desc' ? 'stok_asc' : 'stok_desc';
+                    } else if (column === 'harga') {
+                        this.sort = this.sort === 'harga_tinggi' ? 'harga_rendah' : 'harga_tinggi';
+                    }
+                    this.fetchData(true);
                 },
 
                 async fetchData(resetPage = false) {
