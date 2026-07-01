@@ -70,7 +70,7 @@ class BarangController extends Controller
             $limit = (int) $request->input('limit', 15);
             $page = (int) $request->input('page', 1);
 
-            $total = \Illuminate\Support\Facades\Cache::remember($key . '_count', 3600, function() use ($query) {
+            $total = \Illuminate\Support\Facades\Cache::remember(md5($query->toSql() . implode('', $query->getBindings())) . '_count', 3600, function() use ($query) {
                 $sql = $query->toSql();
                 $bindings = $query->getBindings();
                 try {
