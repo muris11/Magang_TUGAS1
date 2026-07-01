@@ -8,7 +8,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @prodvite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-[Geist] text-[#111111] antialiased bg-[#FDFBF9] selection:bg-black selection:text-white flex flex-col min-h-screen">
         <div class="flex-1 flex flex-col justify-center items-center px-4 sm:px-6 py-12">

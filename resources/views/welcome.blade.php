@@ -7,7 +7,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @prodvite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-[#FDFBF9] text-[#111111] font-[Geist] antialiased min-h-screen flex flex-col items-center justify-center selection:bg-black selection:text-white">
         <div class="max-w-2xl w-full px-6 text-center">
