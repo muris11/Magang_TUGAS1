@@ -203,7 +203,7 @@
                     try {
                         const startTime = performance.now();
 
-                        let url = `/api/barang?limit=${this.limit}&page=${this.page}`;
+                        let url = `/barang/data?limit=${this.limit}&page=${this.page}`;
                         if (this.searchQuery) url += `&search=${encodeURIComponent(this.searchQuery)}`;
                         if (this.kategori) url += `&kategori=${encodeURIComponent(this.kategori)}`;
                         if (this.sort) url += `&sort=${encodeURIComponent(this.sort)}`;
