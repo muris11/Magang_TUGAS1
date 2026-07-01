@@ -209,6 +209,7 @@
                         if (this.sort) url += `&sort=${encodeURIComponent(this.sort)}`;
 
                         const response = await fetch(url, {
+                            credentials: 'same-origin',
                             headers: {
                                 'Accept': 'application/json',
                                 'X-Requested-With': 'XMLHttpRequest',
