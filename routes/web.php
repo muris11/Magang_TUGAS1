@@ -62,17 +62,16 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/fix-cookie', function (\Illuminate\Http\Request $request) {
-    $request->session()->flush();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+    \DB::table('sessions')->truncate();
 
     \Artisan::call('config:clear');
     \Artisan::call('view:clear');
     \Artisan::call('cache:clear');
     \Artisan::call('route:clear');
 
-    return response('OK. Cache cleared. Silakan hard reload (Ctrl+Shift+R) lalu login ulang di /login', 200)
-        ->header('Content-Type', 'text/plain');
+    return response()
+        ->view('fix-cookie', [], 200)
+        ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
 });
 
 Route::get('/whoami', function (\Illuminate\Http\Request $request) {
