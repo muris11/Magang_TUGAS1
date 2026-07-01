@@ -99,7 +99,7 @@
                 
                 async init() {
                     try {
-                        const response = await fetch('/api/dashboard', {
+                        const response = await fetch('/dashboard/data', {
                             headers: {
                                 'Accept': 'application/json',
                                 'X-Requested-With': 'XMLHttpRequest'
