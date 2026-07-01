@@ -70,13 +70,19 @@ class BarangController extends Controller
             $limit = (int) $request->input('limit', 15);
             $page = (int) $request->input('page', 1);
 
-            if (!$hasFilters) {
-                $total = \Illuminate\Support\Facades\Cache::remember('barangs_total_count', 3600, function() {
-                    return (int) \Illuminate\Support\Facades\DB::select("SELECT reltuples::bigint AS estimate FROM pg_class WHERE relname = 'barangs'")[0]->estimate;
-                });
-            } else {
-                $total = $query->count();
-            }
+            $total = \Illuminate\Support\Facades\Cache::remember($key . '_count', 3600, function() use ($query) {
+                $sql = $query->toSql();
+                $bindings = $query->getBindings();
+                try {
+                    $explain = \Illuminate\Support\Facades\DB::select("EXPLAIN $sql", $bindings);
+                    if (preg_match('/rows=(\d+)/', $explain[0]->{"QUERY PLAN"}, $matches)) {
+                        return (int) $matches[1];
+                    }
+                } catch (\Exception $e) {
+                    // fallback to standard count
+                }
+                return $query->count();
+            });
 
             $offset = ($page - 1) * $limit;
             $ids = (clone $query)->select('id')->offset($offset)->limit($limit)->pluck('id')->toArray();
