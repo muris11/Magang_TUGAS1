@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -64,7 +65,13 @@ Route::get('/fix-cookie', function (\Illuminate\Http\Request $request) {
     $request->session()->flush();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    return response('Session cleared. Silakan login ulang di /login', 200)
+
+    \Artisan::call('config:clear');
+    \Artisan::call('view:clear');
+    \Artisan::call('cache:clear');
+    \Artisan::call('route:clear');
+
+    return response('OK. Cache cleared. Silakan hard reload (Ctrl+Shift+R) lalu login ulang di /login', 200)
         ->header('Content-Type', 'text/plain');
 });
 
