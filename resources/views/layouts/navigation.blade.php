@@ -17,6 +17,10 @@
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32,204.44,73.75l-71.57,39.26L51.56,73.75ZM40,90l80,42.83v89L40,178.61Zm176,88.58-80,43.21V132.86l80-43.87Z"/></svg>
                 <span class="font-medium text-[15px]">Inventory</span>
             </a>
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-3.5 rounded-xl transition-colors {{ request()->routeIs('profile.edit') ? 'bg-black text-white shadow-md' : 'text-black/60 hover:bg-black/5 hover:text-black' }}">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><circle cx="128" cy="96" r="64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M30.69,216.71A95.85,95.85,0,0,1,66.61,151.8a104.29,104.29,0,0,0,122.78,0,95.85,95.85,0,0,1,35.92,64.91A8,8,0,0,1,217.54,224H38.46A8,8,0,0,1,30.69,216.71Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
+                <span class="font-medium text-[15px]">Profile</span>
+            </a>
         </div>
     </div>
     <div class="px-8 py-6 border-t border-black/5 flex flex-col gap-4">
@@ -46,6 +50,9 @@
     </a>
     <a href="{{ route('barang.index') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('barang.index') ? 'text-black' : 'text-black/40' }}">
         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32,204.44,73.75l-71.57,39.26L51.56,73.75ZM40,90l80,42.83v89L40,178.61Zm176,88.58-80,43.21V132.86l80-43.87Z"/></svg>
+    </a>
+    <a href="{{ route('profile.edit') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('profile.edit') ? 'text-black' : 'text-black/40' }}">
+        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><circle cx="128" cy="96" r="64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><path d="M30.69,216.71A95.85,95.85,0,0,1,66.61,151.8a104.29,104.29,0,0,0,122.78,0,95.85,95.85,0,0,1,35.92,64.91A8,8,0,0,1,217.54,224H38.46A8,8,0,0,1,30.69,216.71Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>
     </a>
     <form method="POST" action="{{ route('logout') }}" class="m-0 p-0">
         @csrf
