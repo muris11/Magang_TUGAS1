@@ -37,34 +37,18 @@ class BarangController extends Controller
             }
 
             $sort = $request->input('sort', 'terbaru');
-            if ($hasFilters) {
-                switch ($sort) {
-                    case 'terlama': $query->orderByRaw('id + 0 ASC'); break;
-                    case 'harga_tinggi': $query->orderByRaw('harga + 0 DESC'); break;
-                    case 'harga_rendah': $query->orderByRaw('harga + 0 ASC'); break;
-                    case 'nama_asc': $query->orderByRaw("nama_barang || '' ASC"); break;
-                    case 'nama_desc': $query->orderByRaw("nama_barang || '' DESC"); break;
-                    case 'kategori_asc': $query->orderByRaw("kategori || '' ASC"); break;
-                    case 'kategori_desc': $query->orderByRaw("kategori || '' DESC"); break;
-                    case 'stok_asc': $query->orderByRaw('stok + 0 ASC'); break;
-                    case 'stok_desc': $query->orderByRaw('stok + 0 DESC'); break;
-                    case 'terbaru':
-                    default: $query->orderByRaw('id + 0 DESC'); break;
-                }
-            } else {
-                switch ($sort) {
-                    case 'terlama': $query->orderBy('id', 'asc'); break;
-                    case 'harga_tinggi': $query->orderBy('harga', 'desc')->orderBy('id', 'desc'); break;
-                    case 'harga_rendah': $query->orderBy('harga', 'asc')->orderBy('id', 'asc'); break;
-                    case 'nama_asc': $query->orderBy('nama_barang', 'asc')->orderBy('id', 'asc'); break;
-                    case 'nama_desc': $query->orderBy('nama_barang', 'desc')->orderBy('id', 'desc'); break;
-                    case 'kategori_asc': $query->orderBy('kategori', 'asc')->orderBy('id', 'asc'); break;
-                    case 'kategori_desc': $query->orderBy('kategori', 'desc')->orderBy('id', 'desc'); break;
-                    case 'stok_asc': $query->orderBy('stok', 'asc')->orderBy('id', 'asc'); break;
-                    case 'stok_desc': $query->orderBy('stok', 'desc')->orderBy('id', 'desc'); break;
-                    case 'terbaru':
-                    default: $query->orderBy('id', 'desc'); break;
-                }
+            switch ($sort) {
+                case 'terlama': $query->orderBy('id', 'asc'); break;
+                case 'harga_tinggi': $query->orderBy('harga', 'desc')->orderBy('id', 'desc'); break;
+                case 'harga_rendah': $query->orderBy('harga', 'asc')->orderBy('id', 'asc'); break;
+                case 'nama_asc': $query->orderBy('nama_barang', 'asc')->orderBy('id', 'asc'); break;
+                case 'nama_desc': $query->orderBy('nama_barang', 'desc')->orderBy('id', 'desc'); break;
+                case 'kategori_asc': $query->orderBy('kategori', 'asc')->orderBy('id', 'asc'); break;
+                case 'kategori_desc': $query->orderBy('kategori', 'desc')->orderBy('id', 'desc'); break;
+                case 'stok_asc': $query->orderBy('stok', 'asc')->orderBy('id', 'asc'); break;
+                case 'stok_desc': $query->orderBy('stok', 'desc')->orderBy('id', 'desc'); break;
+                case 'terbaru':
+                default: $query->orderBy('id', 'desc'); break;
             }
 
             $limit = (int) $request->input('limit', 15);
