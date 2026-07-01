@@ -9,48 +9,60 @@ class BarangController extends Controller
 {
     public function index(Request $request)
     {
-        $query = \Illuminate\Support\Facades\DB::table('barangs')
-            ->select('id', 'kode_barang', 'nama_barang', 'kategori', 'stok', 'harga');
+        $key = 'barang:' . md5(json_encode([
+            's' => $request->input('search'),
+            'k' => $request->input('kategori'),
+            'o' => $request->input('sort', 'terbaru'),
+            'l' => $request->input('limit', 15),
+            'c' => $request->input('cursor'),
+            'p' => $request->has('page') ? 'page' : 'cursor',
+        ]));
 
-        if ($request->has('search') && !empty($request->search)) {
-            $search = strtolower($request->search);
-            $query->where(function($q) use ($search) {
-                // Use lower() and LIKE to utilize the varchar_pattern_ops indexes
-                $q->whereRaw('lower(kode_barang) like ?', [$search . '%'])
-                  ->orWhereRaw('lower(nama_barang) like ?', [$search . '%']);
-            });
-        }
+        $payload = \Illuminate\Support\Facades\Cache::remember($key, 60, function () use ($request) {
+            $query = \Illuminate\Support\Facades\DB::table('barangs')
+                ->select('id', 'kode_barang', 'nama_barang', 'kategori', 'stok', 'harga');
 
-        if ($request->has('kategori') && !empty($request->kategori)) {
-            $query->where('kategori', $request->kategori);
-        }
+            if ($request->has('search') && !empty($request->search)) {
+                $search = strtolower($request->search);
+                $query->where(function($q) use ($search) {
+                    $q->whereRaw('lower(kode_barang) like ?', [$search . '%'])
+                      ->orWhereRaw('lower(nama_barang) like ?', [$search . '%']);
+                });
+            }
 
-        $sort = $request->input('sort', 'terbaru');
-        switch ($sort) {
-            case 'terlama':
-                $query->orderBy('id', 'asc');
-                break;
-            case 'harga_tinggi':
-                $query->orderBy('harga', 'desc');
-                break;
-            case 'harga_rendah':
-                $query->orderBy('harga', 'asc');
-                break;
-            case 'terbaru':
-            default:
-                $query->orderBy('id', 'desc');
-                break;
-        }
-        
-        $limit = $request->input('limit', 15);
+            if ($request->has('kategori') && !empty($request->kategori)) {
+                $query->where('kategori', $request->kategori);
+            }
 
-        if ($request->has('page')) {
-            $barangs = $query->paginate($limit);
-        } else {
-            $barangs = $query->cursorPaginate($limit);
-        }
+            $sort = $request->input('sort', 'terbaru');
+            switch ($sort) {
+                case 'terlama':
+                    $query->orderBy('id', 'asc');
+                    break;
+                case 'harga_tinggi':
+                    $query->orderBy('harga', 'desc');
+                    break;
+                case 'harga_rendah':
+                    $query->orderBy('harga', 'asc');
+                    break;
+                case 'terbaru':
+                default:
+                    $query->orderBy('id', 'desc');
+                    break;
+            }
 
-        return response()->json($barangs);
+            $limit = $request->input('limit', 15);
+
+            if ($request->has('page')) {
+                $paginator = $query->paginate($limit);
+            } else {
+                $paginator = $query->cursorPaginate($limit);
+            }
+
+            return $paginator->toArray();
+        });
+
+        return response()->json($payload);
     }
 
     public function show($id)
