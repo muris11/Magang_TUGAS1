@@ -60,4 +60,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/fix-cookie', function (\Illuminate\Http\Request $request) {
+    $request->session()->flush();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return response('Session cleared. Silakan login ulang di /login', 200)
+        ->header('Content-Type', 'text/plain');
+});
+
+Route::get('/whoami', function (\Illuminate\Http\Request $request) {
+    return response()->json([
+        'authenticated' => \Auth::check(),
+        'user_id' => \Auth::id(),
+        'session_id' => $request->session()->getId(),
+        'has_session' => $request->session()->isStarted(),
+        'session_name' => config('session.cookie'),
+    ]);
+});
+
 require __DIR__.'/auth.php';
