@@ -2,8 +2,8 @@
     <div class="pt-32 pb-40" x-data="inventoryApp()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
-                <div class="w-full md:w-1/2">
+            <div class="mb-16 flex flex-col xl:flex-row justify-between xl:items-end gap-10">
+                <div class="w-full xl:w-auto shrink-0">
                     <div class="inline-block px-3 py-1 rounded-full bg-black/5 border border-black/5 text-[10px] uppercase tracking-[0.2em] font-medium mb-6">
                         System Database
                     </div>
@@ -19,10 +19,10 @@
                     </div>
                 </div>
 
-                <div class="w-full md:w-1/2 flex flex-col sm:flex-row gap-4 items-end justify-end">
+                <div class="w-full flex flex-col sm:flex-row gap-4 xl:items-end justify-end">
                     
-                    <div class="p-1.5 rounded-[2rem] bg-black/5 border border-black/5 w-full sm:w-auto">
-                        <div class="relative bg-white rounded-[calc(2rem-0.375rem)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] overflow-hidden flex items-center px-4 h-14 w-full sm:w-64 md:w-80">
+                    <div class="p-1.5 rounded-[2rem] bg-black/5 border border-black/5 w-full sm:w-full md:w-auto shrink-0 flex-1 md:flex-none">
+                        <div class="relative bg-white rounded-[calc(2rem-0.375rem)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] overflow-hidden flex items-center px-4 h-14 w-full md:min-w-[16rem]">
                             <svg class="h-5 w-5 text-black/40 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>
                             <input 
                                 type="text" 
