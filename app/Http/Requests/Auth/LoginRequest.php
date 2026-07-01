@@ -42,11 +42,16 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $credentials = [
+            'email' => strtolower(trim($this->input('email'))),
+            'password' => $this->input('password'),
+        ];
+
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             \Log::warning('Login failed', [
-                'email' => $this->string('email'),
+                'email' => $credentials['email'],
                 'ip' => $this->ip(),
                 'session_driver' => config('session.driver'),
                 'session_secure' => config('session.secure'),
@@ -60,7 +65,7 @@ class LoginRequest extends FormRequest
         }
 
         \Log::info('Login success', [
-            'email' => $this->string('email'),
+            'email' => $credentials['email'],
             'user_id' => Auth::id(),
         ]);
 
