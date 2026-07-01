@@ -14,8 +14,7 @@ class BarangController extends Controller
             'k' => $request->input('kategori'),
             'o' => $request->input('sort', 'terbaru'),
             'l' => $request->input('limit', 15),
-            'c' => $request->input('cursor'),
-            'p' => $request->input('page'),
+            'p' => $request->input('page', 1),
         ]));
 
         $payload = \Illuminate\Support\Facades\Cache::remember($key, 60, function () use ($request) {
@@ -38,56 +37,67 @@ class BarangController extends Controller
             }
 
             $sort = $request->input('sort', 'terbaru');
-            switch ($sort) {
-                case 'terlama': $query->orderBy('id', 'asc'); break;
-                case 'harga_tinggi': $query->orderBy('harga', 'desc'); break;
-                case 'harga_rendah': $query->orderBy('harga', 'asc'); break;
-                case 'nama_asc': $query->orderBy('nama_barang', 'asc'); break;
-                case 'nama_desc': $query->orderBy('nama_barang', 'desc'); break;
-                case 'kategori_asc': $query->orderBy('kategori', 'asc'); break;
-                case 'kategori_desc': $query->orderBy('kategori', 'desc'); break;
-                case 'stok_asc': $query->orderBy('stok', 'asc'); break;
-                case 'stok_desc': $query->orderBy('stok', 'desc'); break;
-                case 'terbaru':
-                default: $query->orderBy('id', 'desc'); break;
+            if ($hasFilters) {
+                switch ($sort) {
+                    case 'terlama': $query->orderByRaw('id + 0 ASC'); break;
+                    case 'harga_tinggi': $query->orderByRaw('harga + 0 DESC'); break;
+                    case 'harga_rendah': $query->orderByRaw('harga + 0 ASC'); break;
+                    case 'nama_asc': $query->orderByRaw("nama_barang || '' ASC"); break;
+                    case 'nama_desc': $query->orderByRaw("nama_barang || '' DESC"); break;
+                    case 'kategori_asc': $query->orderByRaw("kategori || '' ASC"); break;
+                    case 'kategori_desc': $query->orderByRaw("kategori || '' DESC"); break;
+                    case 'stok_asc': $query->orderByRaw('stok + 0 ASC'); break;
+                    case 'stok_desc': $query->orderByRaw('stok + 0 DESC'); break;
+                    case 'terbaru':
+                    default: $query->orderByRaw('id + 0 DESC'); break;
+                }
+            } else {
+                switch ($sort) {
+                    case 'terlama': $query->orderBy('id', 'asc'); break;
+                    case 'harga_tinggi': $query->orderBy('harga', 'desc')->orderBy('id', 'desc'); break;
+                    case 'harga_rendah': $query->orderBy('harga', 'asc')->orderBy('id', 'asc'); break;
+                    case 'nama_asc': $query->orderBy('nama_barang', 'asc')->orderBy('id', 'asc'); break;
+                    case 'nama_desc': $query->orderBy('nama_barang', 'desc')->orderBy('id', 'desc'); break;
+                    case 'kategori_asc': $query->orderBy('kategori', 'asc')->orderBy('id', 'asc'); break;
+                    case 'kategori_desc': $query->orderBy('kategori', 'desc')->orderBy('id', 'desc'); break;
+                    case 'stok_asc': $query->orderBy('stok', 'asc')->orderBy('id', 'asc'); break;
+                    case 'stok_desc': $query->orderBy('stok', 'desc')->orderBy('id', 'desc'); break;
+                    case 'terbaru':
+                    default: $query->orderBy('id', 'desc'); break;
+                }
             }
 
             $limit = (int) $request->input('limit', 15);
+            $page = (int) $request->input('page', 1);
 
-            if ($request->has('page')) {
-                $page = (int) $request->input('page', 1);
-
-                if (!$hasFilters) {
-                    $total = \Illuminate\Support\Facades\Cache::remember('barangs_total_count', 3600, function() {
-                        return (int) \Illuminate\Support\Facades\DB::select("SELECT reltuples::bigint AS estimate FROM pg_class WHERE relname = 'barangs'")[0]->estimate;
-                    });
-                } else {
-                    $total = $query->count();
-                }
-
-                $offset = ($page - 1) * $limit;
-                $ids = (clone $query)->select('id')->offset($offset)->limit($limit)->pluck('id')->toArray();
-
-                if (!empty($ids)) {
-                    $models = \Illuminate\Support\Facades\DB::table('barangs')->whereIn('id', $ids)->get()->keyBy('id');
-                    $items = collect($ids)->map(function($id) use ($models) {
-                        return $models[$id];
-                    });
-                } else {
-                    $items = collect();
-                }
-
-                $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
-                    $items, 
-                    $total, 
-                    $limit, 
-                    $page, 
-                    ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'pageName' => 'page']
-                );
+            if (!$hasFilters) {
+                $total = \Illuminate\Support\Facades\Cache::remember('barangs_total_count', 3600, function() {
+                    return (int) \Illuminate\Support\Facades\DB::select("SELECT reltuples::bigint AS estimate FROM pg_class WHERE relname = 'barangs'")[0]->estimate;
+                });
             } else {
-                $query->select('id', 'kode_barang', 'nama_barang', 'kategori', 'stok', 'harga');
-                $paginator = $query->cursorPaginate($limit);
+                $total = $query->count();
             }
+
+            $offset = ($page - 1) * $limit;
+            $ids = (clone $query)->select('id')->offset($offset)->limit($limit)->pluck('id')->toArray();
+
+            if (!empty($ids)) {
+                $models = \Illuminate\Support\Facades\DB::table('barangs')->whereIn('id', $ids)->get()->keyBy('id');
+                // Ensure order is preserved
+                $items = collect($ids)->map(function($id) use ($models) {
+                    return $models[$id];
+                });
+            } else {
+                $items = collect();
+            }
+
+            $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
+                $items, 
+                $total, 
+                $limit, 
+                $page, 
+                ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(), 'pageName' => 'page']
+            );
 
             return $paginator->toArray();
         });
